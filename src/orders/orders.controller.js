@@ -2,6 +2,7 @@ const path = require("path");
 
 // Use the existing order data
 const orders = require(path.resolve("src/data/orders-data"));
+const dishes = require(path.resolve("src/data/dishes-data"));
 
 // Use this function to assigh ID's when necessary
 const nextId = require("../utils/nextId");
@@ -118,10 +119,24 @@ function read(req, res) {
 
 function update(req, res) {
     const foundOrderIndex = res.locals.foundOrderIndex;
-    const id = orders[foundOrderIndex].id;
     const newOrder = res.locals.newOrder;
+    const newDishes = newOrder.dishes;
 
-    orders[foundOrderIndex] = { ...newOrder, id }
+    orders[foundOrderIndex].deliverTo = newOrder.deliverTo;
+    orders[foundOrderIndex].mobileNumber = newOrder.mobileNumber;
+    orders[foundOrderIndex].status = newOrder.status;
+    newDishes.forEach(newDish => {
+        const foundDishIndex = dishes.findIndex(dish => dish.id === newDish.id);
+
+        if (foundDishIndex !== -1) {
+            // Update each field in the existing dish
+            for (const key in newDish) {
+                if (newDish.hasOwnProperty(key) && key !== 'id') {
+                    dishes[foundDishIndex][key] = newDish[key];
+                }
+            }
+        }
+    });
     res.json({ data:  orders[foundOrderIndex] });
 }
 

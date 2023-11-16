@@ -76,10 +76,12 @@ function read(req, res) {
 
 function update(req, res) {
     const foundDishIndex = res.locals.foundDishIndex;
-    const id = dishes[foundDishIndex].id
     const newDish = res.locals.newDish;
 
-    dishes[foundDishIndex] = { ...newDish, id }
+    dishes[foundDishIndex].name = newDish.name;
+    dishes[foundDishIndex].description = newDish.description;
+    dishes[foundDishIndex].price = newDish.price;
+    dishes[foundDishIndex].image_url = newDish.image_url;
     res.json({ data:  dishes[foundDishIndex] });
 }
 
